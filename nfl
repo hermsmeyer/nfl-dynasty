@@ -1,0 +1,100 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+###########################################
+#  NFL Dynasty League Free Agent Scraper  #
+#  By Joshua Hermsmeyer                   #
+###########################################
+
+#####################################################################################
+##  Use grep to filter results. Ex: "nfl | grep WR" will give all available        ##
+##  WR with their projected auction price. Note: since matching is done by         ##
+##  comparing first and last name strings there are bound to be errors. Caution!   ##
+#####################################################################################
+
+import re
+import urllib
+from bs4 import BeautifulSoup
+import sqlite3 as lite
+import sys
+
+# We set the url of the site to scrape and the location of the database
+url = "http://football10.myfantasyleague.com/2013/free_agents?L=68892"
+db = 'players.db'
+
+# We set up a list to hold the names of each free agent listed on the webpage
+falist = []
+
+# We attempt to connect to our projections database
+con = None
+
+try :
+    con = lite.connect(db)
+    print " Connected to database..."
+    
+except lite.Error, e:
+    
+    print "Error %s:" % e.args[0]
+    sys.exit(1)
+
+
+# We connect to the site, store and soupify the result. Unsure if I can do 
+# this in BeautifulSoup to avoid importing urllib.
+try :
+	FA_url = urllib.urlopen(url)
+	FA_html = FA_url.read()
+	soup = BeautifulSoup(FA_html)
+	print " Site successfully scraped..."
+
+except :
+	print " There was a problem scraping the web page :("
+
+# We loop through and grab the last name for each free agent player by position, 
+# appending to falast as we go
+print " Processing..."
+for player in soup('a', re.compile('position_.+?')) : # Regex to grab players at
+	fa = player.get_text()                            # each position (_wr, _rb, etc.)
+	if 'Draft' not in fa : # Scraped page is polluted with draft slots so we remove them
+		falist.append(fa)
+
+# We set our database cursor
+c = con.cursor()
+# We delete the table if it already exists so we have fresh data
+c.execute("DROP TABLE IF EXISTS freeagents")
+# We create a new table with 4 fields
+c.execute('CREATE TABLE freeagents(lname TEXT, fname TEXT, team TEXT, pos TEXT)')
+
+# We loop around and insert players into the database. Players with middle initials 
+# are not captured. Be nice to fix that. The lname column we populate in the database
+# here has a trailing "," after each name. We will need to strip that out later.
+for name in falist :
+	players = (name.split(' '))
+	if len(players) == 4 :
+		c.executemany('INSERT INTO freeagents VALUES(?, ?, ?, ?)', (players,))
+		con.commit()
+print " Data successfully stored. Listing."
+
+# SQL time. We strip the trailing comma from lname field so we can do a proper JOIN later
+c.execute("UPDATE freeagents SET lname = REPLACE(lname, ',', '')")
+con.commit()
+
+# We change the Safety position abbreviation from S to SF to make it grep-able
+c.execute("SELECT pos FROM freeagents")
+for row in c :
+	if row[0] == 'S':
+		c.execute("UPDATE freeagents SET pos = REPLACE(pos, 'S', 'SF')")
+		con.commit()
+
+# We compare last names and first names from our projections table with those of available free agents.
+# Worth noting that we are using the position from the scraped page, not our projections.
+c.execute('SELECT lname, fname, pos, value FROM player_values NATURAL JOIN freeagents')
+# And we print them out
+print '\n ###### Listing Best Available Free Agents ###### \n'
+count = 0
+for row in c :
+	print ' ', '$', row[3], row[1], row[0], row[2]
+	count += 1
+print "\n ###### " + str(count) + " players found ######\n"
+
+# We disconnect from our database
+con.close()
