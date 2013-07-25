@@ -1,8 +1,8 @@
-myfantasyleague.com Dynasty League Free Agent Scraper
-=====================================================
+Dynasty League Free Agent Scraper
+=================================
 
 nfl(.py) solves a problem I encontered when participating in a 32 team NFL Dynasty Fantasy Football league.
-The issue was that because the player pool penetration was so deep (with 32 teams there are very few players that do not get drafted from actual NFL rosters) I was having trouble keeping track of which players, among those still remaining, I should draft. My problem was compounded by the fact that due to the vaugaries of the slow draft leage setup and a week of vacation, I was 17 picks behind the other owners and needed to make a slew of picks all at once.
+The issue was that because the player pool penetration was so deep (with 32 teams there are very few players that do not get drafted from actual NFL rosters) I was having trouble keeping track of which players, among those still remaining, I should draft. My problem was compounded by the fact that due to the vagaries of the slow draft leage setup and a week of vacation, I was 17 picks behind the other owners and needed to make a slew of picks all at once.
 
 Features
 --------
