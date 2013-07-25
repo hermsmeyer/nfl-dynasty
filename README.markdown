@@ -10,7 +10,7 @@ Features
 * Scrapes myfantasyleague.com freeagent pages and returns a list of players
 * Matches available players to a list of projections and outputs a list of players
 * Assuming our projections are listed in decending order by value, output will reflect this
-* Output is grepable by position for quick and dirty filtering. e.g. "nfl | grep CB" will list all available cornerbacks.
+* Output is grepable by position for quick and dirty filtering. e.g. "nfl | grep CB" will list all available cornerbacks for which we have a projection, sorted by value in decending order.
 
 Dependencies
 ------------
