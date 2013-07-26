@@ -8,7 +8,7 @@ Features
 --------
 
 * Scrapes myfantasyleague.com freeagent pages and returns a list of players
-* Matches available players to a list of projections and outputs a list of players
+* Matches available players to a list of projections, and outputs matched players
 * Assuming our projections are listed in decending order by value, output will reflect this
 * Output is grepable by position for quick and dirty filtering. e.g. "nfl | grep CB" will list all available cornerbacks for which we have a projection, sorted by value in decending order.
 
@@ -18,7 +18,7 @@ Dependencies
 * requests
 * BeautifulSoup
 
-The script assumes that you already have a set of projections loaded into a sqlite database. It further assumes you are using myfanstasyleague.com as your provider.
+The script assumes that you already have a set of projections loaded into a sqlite database. It further assumes you are using myfantasyleague.com as your provider.
 
 License
 --------
