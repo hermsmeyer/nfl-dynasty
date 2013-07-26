@@ -20,7 +20,7 @@ import sys
 
 # We set the url of the site to scrape and the location of the database
 url = "http://football10.myfantasyleague.com/2013/free_agents?L=68892"
-db = '~/py27/scripts/nfl-dynasty/players.db'
+db = 'players.db'
 
 # We set up a list to hold the names of each free agent listed on the webpage
 falist = []
@@ -41,7 +41,7 @@ except lite.Error, e:
 # We connect to the site and soupify the result. Unsure if I can do 
 # this in BeautifulSoup directly to avoid importing requests...
 try :
-	r = requests.get("url")
+	r = requests.get(url)
 	soup = BeautifulSoup(r.text)
 	print " Site successfully scraped..."
 
